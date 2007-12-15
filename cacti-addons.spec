@@ -15,7 +15,7 @@ Source1:	http://forums.cacti.net/files/cacti_host_template_local_cacti_polling_h
 # Source1-md5:	3f54a6579f06745426163685facac558
 # Adding template from command line - http://forums.cacti.net/about8827.html
 Source2:	http://forums.cacti.net/files/add_template.zip
-# Source2-md5:  
+# Source2-md5:	a38f01091cb4bf1dbd86db29d6c4c966
 URL:		http://www.debianhelp.co.uk/cactitemplates.htm
 BuildRequires:	rpm-perlprov
 Requires:	cacti
