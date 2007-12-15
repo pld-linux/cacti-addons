@@ -16,6 +16,12 @@ Source1:	http://forums.cacti.net/files/cacti_host_template_local_cacti_polling_h
 # Adding template from command line - http://forums.cacti.net/about8827.html
 Source2:	http://forums.cacti.net/files/add_template.zip
 # Source2-md5:	a38f01091cb4bf1dbd86db29d6c4c966
+# DNS Server Response Time - http://forums.cacti.net/about6332.html
+#TODO - patch path
+Source3:	http://forums.cacti.net/files/cacti_graph_template_dnsresponsetime_204__fixed_timeout_and_interval_161.xml
+# Source3-md5:	abf46930508377099b37d696648ce7de
+Source4:	http://forums.cacti.net/files/dnsresponsetimeloop_115.txt
+# Source4-md5:	0844f7d58ff77904416dee5b120c31cf
 URL:		http://www.debianhelp.co.uk/cactitemplates.htm
 BuildRequires:	rpm-perlprov
 Requires:	cacti
@@ -51,12 +57,24 @@ Summary(pl.UTF-8):	Dodawanie template dla cacti z lini poleceń
 Group:		Applications/WWW
 
 %description cmd_line_add_template
-Adding template for Cacti from command line.
-Usage : /usr/share/cacti/cacti/add_template.php your_template.xml 
+Adding template for Cacti from command line. Usage :
+/usr/share/cacti/cacti/add_template.php your_template.xml
 
 %description cmd_line_add_template -l pl.UTF-8
-Dodawanie template dla cacti z lini poleceń.
-Usage : /usr/share/cacti/cacti/add_template.php your_template.xml
+Dodawanie template dla cacti z lini poleceń. Usage :
+/usr/share/cacti/cacti/add_template.php your_template.xml
+
+%package DNS_Server_Response_Time
+Summary:	Cacti - Measure the response times of multiple internal and external DNS Resolver
+Summary(pl.UTF-8):	Cacti -
+Group:		Applications/WWW
+
+%description DNS_Server_Response_Time
+Measure the response times of multiple internal and external DNS
+Resolvers. The Perl script launches queries repeatedly (after holdoff
+delay between queries) during Cacti default sample intervall of 300
+seconds and the returns minimum, median, average and maximum response
+times.
 
 %prep
 
@@ -69,6 +87,9 @@ install %{SOURCE1} $RPM_BUILD_ROOT%{webcactiscriptqueriesdir}/cacti_host_templat
 
 unzip -x -d $RPM_BUILD_ROOT%{webcactiroot} %{SOURCE2}
 
+install %{SOURCE4} $RPM_BUILD_ROOT%{webcactiscriptqueriesdir}/cacti_graph_template_dnsresponsetime.xml
+install %{SOURCE4} $RPM_BUILD_ROOT%{webcactiscriptdir}/dnsResponseTime.pl
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -76,9 +97,14 @@ rm -rf $RPM_BUILD_ROOT
 
 %files Cacti_Poller_Statistics
 %defattr(644,root,root,755)
-%{webcactiscriptdir}/ss_poller.php
+%attr(755,root,root) %{webcactiscriptdir}/ss_poller.php
 %{webcactiscriptqueriesdir}/cacti_host_template_local_cacti_polling_host.xml
 
 %files cmd_line_add_template
 %defattr(644,root,root,755)
 %attr(755,root,root) %{webcactiroot}/cacti/add_template.php
+
+%files DNS_Server_Response_Time
+%defattr(644,root,root,755)
+%attr(755,root,root) %{webcactiscriptdir}/dnsResponseTime.pl
+%{webcactiscriptqueriesdir}/cacti_graph_template_dnsresponsetime.xml
