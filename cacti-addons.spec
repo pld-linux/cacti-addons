@@ -52,6 +52,7 @@ Skrypty i templaty dla Cacti.
 Summary:	Statistics for Cacti Poller
 Summary(pl.UTF-8):	Statystyki działania Pollera Cacti
 Group:		Applications/WWW
+Requires:	%{name}-cmd_line_add_template
 
 %description Cacti_Poller_Statistics
 Statistics for Cacti Poller, works with localhost only.
@@ -76,6 +77,7 @@ Dodawanie template dla cacti z lini poleceń. Usage :
 Summary:	Cacti - Measure the response times of multiple internal and external DNS Resolver
 Summary(pl.UTF-8):	Cacti -
 Group:		Applications/WWW
+Requires:	%{name}-cmd_line_add_template
 
 %description DNS_Server_Response_Time
 Measure the response times of multiple internal and external DNS
@@ -88,6 +90,7 @@ times.
 Summary:	Graphs the locked machines, shares and files from a samba server
 Summary(pl.UTF-8):	Samba - wykresy przyłączonych stacji, udziałów i plików w Cacti
 Group:		Applications/WWW
+Requires:	%{name}-cmd_line_add_template
 
 %description Samba_locked_machine
 Add-on for Cacti - graphs the locked machines, shares and files from a
@@ -101,6 +104,7 @@ i plików.
 Summary:	Template to query hddtemp deamon and graph disks temperature
 Summary(pl.UTF-8):	Wykresy temperatury dysków - dane pobierane z hddtemp
 Group:		Applications/WWW
+Requires:	%{name}-cmd_line_add_template
 
 %description hddtemp
 Template to query hddtemp deamon and graph disks temperature.
@@ -135,7 +139,17 @@ install cacti-linux-hddtemp-1.0/cacti_graph_template_linux_hddtemp*.xml $RPM_BUI
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%post
+%post Cacti_Poller_Statistics 
+%{webcactiroot}/cacti/add_template.php  %{webcactiscriptqueriesdir}/cacti_host_template_local_cacti_polling_host.xml
+
+%post DNS_Server_Response_Time
+%{webcactiroot}/cacti/add_template.php %{webcactiscriptqueriesdir}/cacti_graph_template_dnsresponsetime.xml
+
+%post Samba_locked_machine
+%{webcactiroot}/cacti/add_template.php %{webcactiscriptqueriesdir}/cacti_graph_template_snmp_samba.xml
+
+%post hddtemp
+%{webcactiroot}/cacti/add_template.php %{webcactiscriptqueriesdir}/cacti_graph_template_linux_hddtemp_disk_temperature*.xml
 
 %files Cacti_Poller_Statistics
 %defattr(644,root,root,755)
