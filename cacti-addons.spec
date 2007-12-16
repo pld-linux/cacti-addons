@@ -7,7 +7,7 @@ Summary:	Add-ons for Cacti
 Summary(pl.UTF-8):	Dodatki do Cacti
 Name:		cacti-addons
 Version:	0.1
-Release:	0.1
+Release:	0.2
 License:	GPL v2
 Group:		Applications/WWW
 #Show locked Machines, Shares and Files from a Samba Server - http://forums.cacti.net/about7516.html
@@ -127,7 +127,7 @@ install samba/samba.pl $RPM_BUILD_ROOT%{webcactiscriptdir}
 install ss_poller.php $RPM_BUILD_ROOT%{webcactiscriptdir}/ss_poller.php
 install %{SOURCE2} $RPM_BUILD_ROOT%{webcactiscriptqueriesdir}/cacti_host_template_local_cacti_polling_host.xml
 
-install cacti/add_template.php $RPM_BUILD_ROOT%{webcactiroot}/cacti/add_template.php
+install cacti/add_template.php $RPM_BUILD_ROOT%{webcactiroot}/add_template.php
 
 install %{SOURCE4} $RPM_BUILD_ROOT%{webcactiscriptqueriesdir}/cacti_graph_template_dnsresponsetime.xml
 install %{SOURCE5} $RPM_BUILD_ROOT%{webcactiscriptdir}/dnsResponseTime.pl
@@ -140,16 +140,16 @@ install cacti-linux-hddtemp-1.0/cacti_graph_template_linux_hddtemp*.xml $RPM_BUI
 rm -rf $RPM_BUILD_ROOT
 
 %post Cacti_Poller_Statistics 
-%{webcactiroot}/cacti/add_template.php  %{webcactiscriptqueriesdir}/cacti_host_template_local_cacti_polling_host.xml
+%{webcactiroot}/add_template.php  %{webcactiscriptqueriesdir}/cacti_host_template_local_cacti_polling_host.xml
 
 %post DNS_Server_Response_Time
-%{webcactiroot}/cacti/add_template.php %{webcactiscriptqueriesdir}/cacti_graph_template_dnsresponsetime.xml
+%{webcactiroot}/add_template.php %{webcactiscriptqueriesdir}/cacti_graph_template_dnsresponsetime.xml
 
 %post Samba_locked_machine
-%{webcactiroot}/cacti/add_template.php %{webcactiscriptqueriesdir}/cacti_graph_template_snmp_samba.xml
+%{webcactiroot}/add_template.php %{webcactiscriptqueriesdir}/cacti_graph_template_snmp_samba.xml
 
 %post hddtemp
-%{webcactiroot}/cacti/add_template.php %{webcactiscriptqueriesdir}/cacti_graph_template_linux_hddtemp_disk_temperature*.xml
+%{webcactiroot}/add_template.php %{webcactiscriptqueriesdir}/cacti_graph_template_linux_hddtemp_disk_temperature*.xml
 
 %files Cacti_Poller_Statistics
 %defattr(644,root,root,755)
@@ -158,7 +158,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files cmd_line_add_template
 %defattr(644,root,root,755)
-%attr(755,root,root) %{webcactiroot}/cacti/add_template.php
+%attr(755,root,root) %{webcactiroot}/add_template.php
 
 %files DNS_Server_Response_Time
 %defattr(644,root,root,755)
