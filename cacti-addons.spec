@@ -1,5 +1,5 @@
 # TODO	- add another
-#	- patches for path to files
+#	- patches for path to files (bin,includes)
 #	- %post - add template to cacti
 %define		namesrc	cacti_templates
 %include	/usr/lib/rpm/macros.perl
@@ -32,6 +32,8 @@ Source6:	http://www.pawelko.net/xmedia/cacti/cacti-linux-hddtemp-1.0.tar.gz
 # Source6-md5:	d08898b43978ccbd863076c4b3124987
 URL:		http://www.debianhelp.co.uk/cactitemplates.htm
 BuildRequires:	rpm-perlprov
+BuildRequires:	rpmbuild(macros) >= 1.322
+%{?requires_php_extension}
 Requires:	cacti
 BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -41,6 +43,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		webcactiscrptserverdir	%{webcactiroot}/resource/script_server
 %define		webcactiscriptqueriesdir %{webcactiroot}/resource/script_queries
 %define		webcactisnmpqueriesdir	%{webcactiroot}/resource/snmp_queries
+%define		__php			%{_bindir}/php
 
 %description
 Templates and scripts for Cacti.
@@ -140,16 +143,16 @@ install cacti-linux-hddtemp-1.0/cacti_graph_template_linux_hddtemp*.xml $RPM_BUI
 rm -rf $RPM_BUILD_ROOT
 
 %post Cacti_Poller_Statistics 
-%{webcactiroot}/add_template.php  %{webcactiscriptqueriesdir}/cacti_host_template_local_cacti_polling_host.xml
+%{__php} %{webcactiroot}/add_template.php  %{webcactiscriptqueriesdir}/cacti_host_template_local_cacti_polling_host.xml
 
 %post DNS_Server_Response_Time
-%{webcactiroot}/add_template.php %{webcactiscriptqueriesdir}/cacti_graph_template_dnsresponsetime.xml
+%{__php} %{webcactiroot}/add_template.php %{webcactiscriptqueriesdir}/cacti_graph_template_dnsresponsetime.xml
 
 %post Samba_locked_machine
-%{webcactiroot}/add_template.php %{webcactiscriptqueriesdir}/cacti_graph_template_snmp_samba.xml
+%{__php} %{webcactiroot}/add_template.php %{webcactiscriptqueriesdir}/cacti_graph_template_snmp_samba.xml
 
 %post hddtemp
-%{webcactiroot}/add_template.php %{webcactiscriptqueriesdir}/cacti_graph_template_linux_hddtemp_disk_temperature*.xml
+%{__php} %{webcactiroot}/add_template.php %{webcactiscriptqueriesdir}/cacti_graph_template_linux_hddtemp_disk_temperature*.xml
 
 %files Cacti_Poller_Statistics
 %defattr(644,root,root,755)
