@@ -1,6 +1,8 @@
-# TODO	- add another
-#	- patches for path to files (bin,includes)
-#	- %post - add template to cacti
+# TODO
+# - add another (another what???)
+# - patches for path to files (bin,includes)
+# - %%post - add template to cacti
+# - instead of using %{__php} macro, make scripts executable with #!/usr/bin/php !
 %define		namesrc	cacti_templates
 %include	/usr/lib/rpm/macros.perl
 Summary:	Add-ons for Cacti
@@ -33,7 +35,6 @@ Source6:	http://www.pawelko.net/xmedia/cacti/cacti-linux-hddtemp-1.0.tar.gz
 URL:		http://www.debianhelp.co.uk/cactitemplates.htm
 BuildRequires:	rpm-perlprov
 BuildRequires:	rpmbuild(macros) >= 1.322
-%{?requires_php_extension}
 Requires:	cacti
 BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
