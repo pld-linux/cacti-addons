@@ -1,5 +1,5 @@
 # TODO
-# - add another (another what???)
+# - add another scripts,addons 
 # - patches for path to files (bin,includes)
 # - %%post - add template to cacti
 # - instead of using %{__php} macro, make scripts executable with #!/usr/bin/php !
@@ -9,7 +9,7 @@ Summary:	Add-ons for Cacti
 Summary(pl.UTF-8):	Dodatki do Cacti
 Name:		cacti-addons
 Version:	0.1
-Release:	0.2
+Release:	0.3
 License:	GPL v2
 Group:		Applications/WWW
 #Show locked Machines, Shares and Files from a Samba Server - http://forums.cacti.net/about7516.html
@@ -32,6 +32,10 @@ Source5:	http://forums.cacti.net/files/dnsresponsetimeloop_115.txt
 #URL:	http://www.pawelko.net/Cacti/3-Hddtemp-Template-For-Cacti
 Source6:	http://www.pawelko.net/xmedia/cacti/cacti-linux-hddtemp-1.0.tar.gz
 # Source6-md5:	d08898b43978ccbd863076c4b3124987
+# MySQL Host Template - http://www.faemalia.net/mysqlUtils/ , http://forums.cacti.net/viewtopic.php?t=11010
+Source7:	http://www.faemalia.net/mysqlUtils/teMySQLcacti-20060810.tar.gz
+# Source5-md5:	
+Patch0:		%{name}-add_template.patch
 URL:		http://www.debianhelp.co.uk/cactitemplates.htm
 BuildRequires:	rpm-perlprov
 BuildRequires:	rpmbuild(macros) >= 1.322
@@ -119,6 +123,9 @@ Wykresy temperatury dysków - dane pobierane z hddtemp.
 %prep
 %setup -q -c -a3 -a6
 gzip -dNc %{SOURCE1} > ./ss_poller.php
+%patch0 -p1
+# undos the source
+find '(' -name '*.php' -o -name '*.inc' ')' -print0 | xargs -0 sed -i -e 's,\r$,,'
 
 %install
 rm -rf $RPM_BUILD_ROOT
