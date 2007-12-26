@@ -1,5 +1,5 @@
 # TODO
-# - add another scripts,addons 
+# - add more scripts,addons 
 # - patches for path to files (bin,includes)
 # - %%post - add template to cacti
 # - instead of using %{__php} macro, make scripts executable with #!/usr/bin/php !
@@ -37,6 +37,7 @@ Source7:	http://www.faemalia.net/mysqlUtils/teMySQLcacti-20060810.tar.gz
 # Source5-md5:	
 Patch0:		%{name}-add_template.patch
 URL:		http://www.debianhelp.co.uk/cactitemplates.htm
+BR:	 - instead of using %{__php} macro, make scripts executable with #!/usr/bin/php !
 BuildRequires:	rpm-perlprov
 BuildRequires:	rpmbuild(macros) >= 1.322
 Requires:	cacti
@@ -122,14 +123,13 @@ Wykresy temperatury dysków - dane pobierane z hddtemp.
 
 %prep
 %setup -q -c -a3 -a6
-gzip -dNc %{SOURCE1} > ./ss_poller.php
+gzip -dNc %{SOURCE1} > ss_poller.php
 %patch0 -p1
 # undos the source
 find '(' -name '*.php' -o -name '*.inc' ')' -print0 | xargs -0 sed -i -e 's,\r$,,'
 
 %install
 rm -rf $RPM_BUILD_ROOT
-
 install -d $RPM_BUILD_ROOT{%{webcactiroot}/cacti,%{webcactiscriptdir},%{webcactiscriptqueriesdir},%{webcactisnmpqueriesdir},%{webcactiscrptserverdir},%{_bindir}}
 
 install samba/cacti_graph_template_snmp_samba.xml $RPM_BUILD_ROOT%{webcactiscriptqueriesdir}
