@@ -55,7 +55,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Templates and scripts for Cacti.
 
 %description -l pl.UTF-8
-Skrypty i templaty dla Cacti.
+Skrypty i szablony dla Cacti.
 
 %package Cacti_Poller_Statistics
 Summary:	Statistics for Cacti Poller
@@ -67,11 +67,11 @@ Requires:	%{name}-cmd_line_add_template
 Statistics for Cacti Poller, works with localhost only.
 
 %description Cacti_Poller_Statistics -l pl.UTF-8
-Statystyki działania Pollera Cacti, działa tylko lokalnie.
+Statystyki działania Pollera Cacti; działają tylko lokalnie.
 
 %package cmd_line_add_template
 Summary:	Adding template for Cacti from command line
-Summary(pl.UTF-8):	Dodawanie template dla cacti z lini poleceń
+Summary(pl.UTF-8):	Dodawanie szablonów dla Cacti z linii poleceń
 Group:		Applications/WWW
 
 %description cmd_line_add_template
@@ -79,35 +79,42 @@ Adding template for Cacti from command line. Usage :
 /usr/share/cacti/cacti/add_template.php your_template.xml
 
 %description cmd_line_add_template -l pl.UTF-8
-Dodawanie template dla cacti z lini poleceń. Usage :
+Dodawanie szablonu dla Cacti z linii poleceń. Wywołanie:
 /usr/share/cacti/cacti/add_template.php your_template.xml
 
 %package DNS_Server_Response_Time
 Summary:	Cacti - Measure the response times of multiple internal and external DNS Resolver
-Summary(pl.UTF-8):	Cacti -
+Summary(pl.UTF-8):	Cacti - określanie czasu odpowiedzi wielu wewnętrznych lub zewnętrznych DNS-ów
 Group:		Applications/WWW
 Requires:	%{name}-cmd_line_add_template
 
 %description DNS_Server_Response_Time
 Measure the response times of multiple internal and external DNS
 Resolvers. The Perl script launches queries repeatedly (after holdoff
-delay between queries) during Cacti default sample intervall of 300
+delay between queries) during Cacti default sample interval of 300
 seconds and the returns minimum, median, average and maximum response
 times.
 
+%description DNS_Server_Response_Time -l pl.UTF-8
+Określanie czasu odpowiedzi wielu wewnętrznych lub zewnętrznych
+DNS-ów. Skrypt w perlu powtarza zapytania (z określonym odstępem
+między nimi) w czasie domyślnych 300-sekundowych interwałów czasowych
+Cacti i zwraca czasy odpowiedzi minimalne, średnie, maksymalne oraz
+ich mediany.
+
 %package Samba_locked_machine
-Summary:	Graphs the locked machines, shares and files from a samba server
-Summary(pl.UTF-8):	Samba - wykresy przyłączonych stacji, udziałów i plików w Cacti
+Summary:	Graphs the locked machines, shares and files from a Samba server
+Summary(pl.UTF-8):	Wykresy zablokowanych stacji, udziałów i plików z serwera Samby
 Group:		Applications/WWW
 Requires:	%{name}-cmd_line_add_template
 
 %description Samba_locked_machine
-Add-on for Cacti - graphs the locked machines, shares and files from a
-samba server in gauge mode.
+Add-on for Cacti: graphs the locked machines, shares and files from a
+Samba server in gauge mode.
 
 %description Samba_locked_machine -l pl.UTF-8
-Dodatek do cacti - Samba - wykresy przyłączonych stacji, udziałów
-i plików.
+Dodatek do cacti: wykresy zablokowanych stacji, udziałów i plików z
+serwera Samby.
 
 %package hddtemp
 Summary:	Template to query hddtemp deamon and graph disks temperature
