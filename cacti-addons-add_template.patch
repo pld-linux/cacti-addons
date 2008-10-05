@@ -7,7 +7,7 @@
 -
 -include_once("./include/config.php");
 -include_once("./lib/import.php");
-+include_once("/usr/share/cacti/include/config.php");
++include_once("/usr/share/cacti/include/global.php");
 +include_once("/usr/share/cacti/lib/import.php"); 
  
  // check if we have good number of argument
