@@ -1,9 +1,8 @@
 # TODO
-# - add more scripts,addons 
+# - add more scripts,addons
 # - patches for path to files (bin,includes)
 # - %%post - add template to cacti
-# - instead of using %{__php} macro, make scripts executable with #!/usr/bin/php !
-%define		namesrc	cacti_templates
+# - instead of using /usr/bin/php macro, make scripts executable with #!/usr/bin/php !
 %include	/usr/lib/rpm/macros.perl
 Summary:	Add-ons for Cacti
 Summary(pl.UTF-8):	Dodatki do Cacti
@@ -12,7 +11,7 @@ Version:	0.1
 Release:	0.3
 License:	GPL v2
 Group:		Applications/WWW
-#Show locked Machines, Shares and Files from a Samba Server - http://forums.cacti.net/about7516.html
+# Show locked Machines, Shares and Files from a Samba Server - http://forums.cacti.net/about7516.html
 Source0:	http://forums.cacti.net/files/samba.tar.gz
 # Source0-md5:	b8fc04a74b8ab297fd39fb6fb02d80f4
 # Cacti Poller Statistics - http://forums.cacti.net/about18057-0-asc-0.html
@@ -34,22 +33,16 @@ Source6:	http://www.pawelko.net/xmedia/cacti/cacti-linux-hddtemp-1.0.tar.gz
 # Source6-md5:	d08898b43978ccbd863076c4b3124987
 # MySQL Host Template - http://www.faemalia.net/mysqlUtils/ , http://forums.cacti.net/viewtopic.php?t=11010
 Source7:	http://www.faemalia.net/mysqlUtils/teMySQLcacti-20060810.tar.gz
-# Source5-md5:	
+# Source5-md5:
 Patch0:		%{name}-add_template.patch
 URL:		http://www.debianhelp.co.uk/cactitemplates.htm
-BR:	 - instead of using %{__php} macro, make scripts executable with #!/usr/bin/php !
 BuildRequires:	rpm-perlprov
 BuildRequires:	rpmbuild(macros) >= 1.322
 Requires:	cacti
 BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
-%define		webcactiroot		/usr/share/cacti
-%define		webcactiscriptdir	%{webcactiroot}/scripts
-%define		webcactiscrptserverdir	%{webcactiroot}/resource/script_server
-%define		webcactiscriptqueriesdir %{webcactiroot}/resource/script_queries
-%define		webcactisnmpqueriesdir	%{webcactiroot}/resource/snmp_queries
-%define		__php			%{_bindir}/php
+%define		cactidir		/usr/share/cacti
 
 %description
 Templates and scripts for Cacti.
@@ -132,65 +125,66 @@ Wykresy temperatury dysków - dane pobierane z hddtemp.
 %setup -q -c -a3 -a6
 gzip -dNc %{SOURCE1} > ss_poller.php
 %patch0 -p1
+
 # undos the source
 find '(' -name '*.php' -o -name '*.inc' ')' -print0 | xargs -0 sed -i -e 's,\r$,,'
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{webcactiroot}/cacti,%{webcactiscriptdir},%{webcactiscriptqueriesdir},%{webcactisnmpqueriesdir},%{webcactiscrptserverdir},%{_bindir}}
+install -d $RPM_BUILD_ROOT{%{cactidir}/cacti,%{cactidir}/scripts,%{cactidir}/resource/script_queries,%{cactidir}/resource/snmp_queries,%{cactidir}/resource/script_server,%{_bindir}}
 
-install samba/cacti_graph_template_snmp_samba.xml $RPM_BUILD_ROOT%{webcactiscriptqueriesdir}
-install samba/samba.pl $RPM_BUILD_ROOT%{webcactiscriptdir}
+install samba/cacti_graph_template_snmp_samba.xml $RPM_BUILD_ROOT%{cactidir}/resource/script_queries
+install samba/samba.pl $RPM_BUILD_ROOT%{cactidir}/scripts
 
-install ss_poller.php $RPM_BUILD_ROOT%{webcactiscriptdir}/ss_poller.php
-install %{SOURCE2} $RPM_BUILD_ROOT%{webcactiscriptqueriesdir}/cacti_host_template_local_cacti_polling_host.xml
+install ss_poller.php $RPM_BUILD_ROOT%{cactidir}/scripts/ss_poller.php
+install %{SOURCE2} $RPM_BUILD_ROOT%{cactidir}/resource/script_queries/cacti_host_template_local_cacti_polling_host.xml
 
-install cacti/add_template.php $RPM_BUILD_ROOT%{webcactiroot}/add_template.php
+install cacti/add_template.php $RPM_BUILD_ROOT%{cactidir}/add_template.php
 
-install %{SOURCE4} $RPM_BUILD_ROOT%{webcactiscriptqueriesdir}/cacti_graph_template_dnsresponsetime.xml
-install %{SOURCE5} $RPM_BUILD_ROOT%{webcactiscriptdir}/dnsResponseTime.pl
+install %{SOURCE4} $RPM_BUILD_ROOT%{cactidir}/resource/script_queries/cacti_graph_template_dnsresponsetime.xml
+install %{SOURCE5} $RPM_BUILD_ROOT%{cactidir}/scripts/dnsResponseTime.pl
 
-install cacti-linux-hddtemp-1.0/hddtemp.xml $RPM_BUILD_ROOT%{webcactiscriptqueriesdir}
-install cacti-linux-hddtemp-1.0/hddtemp.php $RPM_BUILD_ROOT%{webcactiscriptdir}
-install cacti-linux-hddtemp-1.0/cacti_graph_template_linux_hddtemp*.xml $RPM_BUILD_ROOT%{webcactiscriptqueriesdir}
+install cacti-linux-hddtemp-1.0/hddtemp.xml $RPM_BUILD_ROOT%{cactidir}/resource/script_queries
+install cacti-linux-hddtemp-1.0/hddtemp.php $RPM_BUILD_ROOT%{cactidir}/scripts
+install cacti-linux-hddtemp-1.0/cacti_graph_template_linux_hddtemp*.xml $RPM_BUILD_ROOT%{cactidir}/resource/script_queries
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%post Cacti_Poller_Statistics 
-%{__php} %{webcactiroot}/add_template.php  %{webcactiscriptqueriesdir}/cacti_host_template_local_cacti_polling_host.xml
+%post Cacti_Poller_Statistics
+%{_bindir}/php %{cactidir}/add_template.php  %{cactidir}/resource/script_queries/cacti_host_template_local_cacti_polling_host.xml
 
 %post DNS_Server_Response_Time
-%{__php} %{webcactiroot}/add_template.php %{webcactiscriptqueriesdir}/cacti_graph_template_dnsresponsetime.xml
+%{_bindir}/php %{cactidir}/add_template.php %{cactidir}/resource/script_queries/cacti_graph_template_dnsresponsetime.xml
 
 %post Samba_locked_machine
-%{__php} %{webcactiroot}/add_template.php %{webcactiscriptqueriesdir}/cacti_graph_template_snmp_samba.xml
+%{_bindir}/php %{cactidir}/add_template.php %{cactidir}/resource/script_queries/cacti_graph_template_snmp_samba.xml
 
 %post hddtemp
-%{__php} %{webcactiroot}/add_template.php %{webcactiscriptqueriesdir}/cacti_graph_template_linux_hddtemp_disk_temperature*.xml
+%{_bindir}/php %{cactidir}/add_template.php %{cactidir}/resource/script_queries/cacti_graph_template_linux_hddtemp_disk_temperature*.xml
 
 %files Cacti_Poller_Statistics
 %defattr(644,root,root,755)
-%attr(755,root,root) %{webcactiscriptdir}/ss_poller.php
-%{webcactiscriptqueriesdir}/cacti_host_template_local_cacti_polling_host.xml
+%attr(755,root,root) %{cactidir}/scripts/ss_poller.php
+%{cactidir}/resource/script_queries/cacti_host_template_local_cacti_polling_host.xml
 
 %files cmd_line_add_template
 %defattr(644,root,root,755)
-%attr(755,root,root) %{webcactiroot}/add_template.php
+%attr(755,root,root) %{cactidir}/add_template.php
 
 %files DNS_Server_Response_Time
 %defattr(644,root,root,755)
-%attr(755,root,root) %{webcactiscriptdir}/dnsResponseTime.pl
-%{webcactiscriptqueriesdir}/cacti_graph_template_dnsresponsetime.xml
+%attr(755,root,root) %{cactidir}/scripts/dnsResponseTime.pl
+%{cactidir}/resource/script_queries/cacti_graph_template_dnsresponsetime.xml
 
 %files Samba_locked_machine
 %defattr(644,root,root,755)
-%attr(755,root,root) %{webcactiscriptdir}/samba.pl
-%{webcactiscriptqueriesdir}/cacti_graph_template_snmp_samba.xml
+%attr(755,root,root) %{cactidir}/scripts/samba.pl
+%{cactidir}/resource/script_queries/cacti_graph_template_snmp_samba.xml
 
-%files hddtemp 
+%files hddtemp
 %defattr(644,root,root,755)
 %doc cacti-linux-hddtemp-1.0/{CHANGELOG.txt,INSTALL.txt}
-%attr(755,root,root) %{webcactiscriptdir}/hddtemp.php
-%{webcactiscriptqueriesdir}/cacti_graph_template_linux_hddtemp_disk_temperature*.xml
-%{webcactiscriptqueriesdir}/hddtemp.xml
+%attr(755,root,root) %{cactidir}/scripts/hddtemp.php
+%{cactidir}/resource/script_queries/cacti_graph_template_linux_hddtemp_disk_temperature*.xml
+%{cactidir}/resource/script_queries/hddtemp.xml
