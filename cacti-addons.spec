@@ -1,14 +1,13 @@
 # TODO
-# - add more scripts,addons
+# - add more scripts,addons, but as separate packages
 # - patches for path to files (bin,includes)
-# - %%post - add template to cacti
 # - instead of using /usr/bin/php macro, make scripts executable with #!/usr/bin/php !
 %include	/usr/lib/rpm/macros.perl
 Summary:	Add-ons for Cacti
 Summary(pl.UTF-8):	Dodatki do Cacti
 Name:		cacti-addons
 Version:	0.1
-Release:	0.3
+Release:	0.12
 License:	GPL v2
 Group:		Applications/WWW
 # Show locked Machines, Shares and Files from a Samba Server - http://forums.cacti.net/about7516.html
@@ -20,8 +19,6 @@ Source1:	http://forums.cacti.net/files/ss_poller.php.gz
 Source2:	http://forums.cacti.net/files/cacti_host_template_local_cacti_polling_host_171.xml
 # Source2-md5:	3f54a6579f06745426163685facac558
 # Adding template from command line - http://forums.cacti.net/about8827.html
-Source3:	http://forums.cacti.net/files/add_template.zip
-# Source3-md5:	a38f01091cb4bf1dbd86db29d6c4c966
 # DNS Server Response Time - http://forums.cacti.net/about6332.html
 Source4:	http://forums.cacti.net/files/cacti_graph_template_dnsresponsetime_204__fixed_timeout_and_interval_161.xml
 # Source4-md5:	abf46930508377099b37d696648ce7de
@@ -33,11 +30,11 @@ Source6:	http://www.pawelko.net/xmedia/cacti/cacti-linux-hddtemp-1.0.tar.gz
 # Source6-md5:	d08898b43978ccbd863076c4b3124987
 # MySQL Host Template - http://www.faemalia.net/mysqlUtils/ , http://forums.cacti.net/viewtopic.php?t=11010
 Source7:	http://www.faemalia.net/mysqlUtils/teMySQLcacti-20060810.tar.gz
-# Source5-md5:
-Patch0:		%{name}-add_template.patch
+# Source7-md5:	9fa929206625d0824dff77168c85e6f8
 URL:		http://www.debianhelp.co.uk/cactitemplates.htm
 BuildRequires:	rpm-perlprov
 BuildRequires:	rpmbuild(macros) >= 1.322
+BuildRequires:	unzip
 Requires:	cacti
 BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -54,7 +51,8 @@ Skrypty i szablony dla Cacti.
 Summary:	Statistics for Cacti Poller
 Summary(pl.UTF-8):	Statystyki działania Pollera Cacti
 Group:		Applications/WWW
-Requires:	%{name}-cmd_line_add_template
+Requires:	cacti
+Requires:	cacti-add_template
 
 %description Cacti_Poller_Statistics
 Statistics for Cacti Poller, works with localhost only.
@@ -62,24 +60,12 @@ Statistics for Cacti Poller, works with localhost only.
 %description Cacti_Poller_Statistics -l pl.UTF-8
 Statystyki działania Pollera Cacti; działają tylko lokalnie.
 
-%package cmd_line_add_template
-Summary:	Adding template for Cacti from command line
-Summary(pl.UTF-8):	Dodawanie szablonów dla Cacti z linii poleceń
-Group:		Applications/WWW
-
-%description cmd_line_add_template
-Adding template for Cacti from command line. Usage :
-/usr/share/cacti/cacti/add_template.php your_template.xml
-
-%description cmd_line_add_template -l pl.UTF-8
-Dodawanie szablonu dla Cacti z linii poleceń. Wywołanie:
-/usr/share/cacti/cacti/add_template.php your_template.xml
-
 %package DNS_Server_Response_Time
 Summary:	Cacti - Measure the response times of multiple internal and external DNS Resolver
 Summary(pl.UTF-8):	Cacti - określanie czasu odpowiedzi wielu wewnętrznych lub zewnętrznych DNS-ów
 Group:		Applications/WWW
-Requires:	%{name}-cmd_line_add_template
+Requires:	cacti
+Requires:	cacti-add_template
 
 %description DNS_Server_Response_Time
 Measure the response times of multiple internal and external DNS
@@ -99,7 +85,8 @@ ich mediany.
 Summary:	Graphs the locked machines, shares and files from a Samba server
 Summary(pl.UTF-8):	Wykresy zablokowanych stacji, udziałów i plików z serwera Samby
 Group:		Applications/WWW
-Requires:	%{name}-cmd_line_add_template
+Requires:	cacti
+Requires:	cacti-add_template
 
 %description Samba_locked_machine
 Add-on for Cacti: graphs the locked machines, shares and files from a
@@ -113,7 +100,8 @@ serwera Samby.
 Summary:	Template to query hddtemp deamon and graph disks temperature
 Summary(pl.UTF-8):	Wykresy temperatury dysków - dane pobierane z hddtemp
 Group:		Applications/WWW
-Requires:	%{name}-cmd_line_add_template
+Requires:	cacti
+Requires:	cacti-add_template
 
 %description hddtemp
 Template to query hddtemp deamon and graph disks temperature.
@@ -122,9 +110,8 @@ Template to query hddtemp deamon and graph disks temperature.
 Wykresy temperatury dysków - dane pobierane z hddtemp.
 
 %prep
-%setup -q -c -a3 -a6
+%setup -q -c -a6
 gzip -dNc %{SOURCE1} > ss_poller.php
-%patch0 -p1
 
 # undos the source
 find '(' -name '*.php' -o -name '*.inc' ')' -print0 | xargs -0 sed -i -e 's,\r$,,'
@@ -139,8 +126,6 @@ install samba/samba.pl $RPM_BUILD_ROOT%{cactidir}/scripts
 install ss_poller.php $RPM_BUILD_ROOT%{cactidir}/scripts/ss_poller.php
 install %{SOURCE2} $RPM_BUILD_ROOT%{cactidir}/resource/script_queries/cacti_host_template_local_cacti_polling_host.xml
 
-install cacti/add_template.php $RPM_BUILD_ROOT%{cactidir}/add_template.php
-
 install %{SOURCE4} $RPM_BUILD_ROOT%{cactidir}/resource/script_queries/cacti_graph_template_dnsresponsetime.xml
 install %{SOURCE5} $RPM_BUILD_ROOT%{cactidir}/scripts/dnsResponseTime.pl
 
@@ -152,25 +137,21 @@ install cacti-linux-hddtemp-1.0/cacti_graph_template_linux_hddtemp*.xml $RPM_BUI
 rm -rf $RPM_BUILD_ROOT
 
 %post Cacti_Poller_Statistics
-%{_bindir}/php %{cactidir}/add_template.php  %{cactidir}/resource/script_queries/cacti_host_template_local_cacti_polling_host.xml
+%{_sbindir}/cacti-add_template %{cactidir}/resource/script_queries/cacti_host_template_local_cacti_polling_host.xml
 
 %post DNS_Server_Response_Time
-%{_bindir}/php %{cactidir}/add_template.php %{cactidir}/resource/script_queries/cacti_graph_template_dnsresponsetime.xml
+%{_sbindir}/cacti-add_template %{cactidir}/resource/script_queries/cacti_graph_template_dnsresponsetime.xml
 
 %post Samba_locked_machine
-%{_bindir}/php %{cactidir}/add_template.php %{cactidir}/resource/script_queries/cacti_graph_template_snmp_samba.xml
+%{_sbindir}/cacti-add_template %{cactidir}/resource/script_queries/cacti_graph_template_snmp_samba.xml
 
 %post hddtemp
-%{_bindir}/php %{cactidir}/add_template.php %{cactidir}/resource/script_queries/cacti_graph_template_linux_hddtemp_disk_temperature*.xml
+%{_sbindir}/cacti-add_template %{cactidir}/resource/script_queries/cacti_graph_template_linux_hddtemp_disk_temperature*.xml
 
 %files Cacti_Poller_Statistics
 %defattr(644,root,root,755)
 %attr(755,root,root) %{cactidir}/scripts/ss_poller.php
 %{cactidir}/resource/script_queries/cacti_host_template_local_cacti_polling_host.xml
-
-%files cmd_line_add_template
-%defattr(644,root,root,755)
-%attr(755,root,root) %{cactidir}/add_template.php
 
 %files DNS_Server_Response_Time
 %defattr(644,root,root,755)
