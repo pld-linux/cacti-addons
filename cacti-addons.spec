@@ -13,7 +13,6 @@ Group:		Applications/WWW
 # Show locked Machines, Shares and Files from a Samba Server - http://forums.cacti.net/about7516.html
 Source0:	http://forums.cacti.net/files/samba.tar.gz
 # Source0-md5:	b8fc04a74b8ab297fd39fb6fb02d80f4
-# Adding template from command line - http://forums.cacti.net/about8827.html
 # DNS Server Response Time - http://forums.cacti.net/about6332.html
 Source4:	http://forums.cacti.net/files/cacti_graph_template_dnsresponsetime_204__fixed_timeout_and_interval_161.xml
 # Source4-md5:	abf46930508377099b37d696648ce7de
