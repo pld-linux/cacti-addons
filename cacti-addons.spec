@@ -13,11 +13,6 @@ Group:		Applications/WWW
 # Show locked Machines, Shares and Files from a Samba Server - http://forums.cacti.net/about7516.html
 Source0:	http://forums.cacti.net/files/samba.tar.gz
 # Source0-md5:	b8fc04a74b8ab297fd39fb6fb02d80f4
-# Cacti Poller Statistics - http://forums.cacti.net/about18057-0-asc-0.html
-Source1:	http://forums.cacti.net/files/ss_poller.php.gz
-# Source1-md5:	5de3f1cfeb5803a9c76a6e1472dd2478
-Source2:	http://forums.cacti.net/files/cacti_host_template_local_cacti_polling_host_171.xml
-# Source2-md5:	3f54a6579f06745426163685facac558
 # Adding template from command line - http://forums.cacti.net/about8827.html
 # DNS Server Response Time - http://forums.cacti.net/about6332.html
 Source4:	http://forums.cacti.net/files/cacti_graph_template_dnsresponsetime_204__fixed_timeout_and_interval_161.xml
@@ -47,19 +42,6 @@ Templates and scripts for Cacti.
 
 %description -l pl.UTF-8
 Skrypty i szablony dla Cacti.
-
-%package Cacti_Poller_Statistics
-Summary:	Statistics for Cacti Poller
-Summary(pl.UTF-8):	Statystyki działania Pollera Cacti
-Group:		Applications/WWW
-Requires:	cacti >= 0.8.7e-8
-Requires:	php-common >= 4:%{php_min_version}
-
-%description Cacti_Poller_Statistics
-Statistics for Cacti Poller, works with localhost only.
-
-%description Cacti_Poller_Statistics -l pl.UTF-8
-Statystyki działania Pollera Cacti; działają tylko lokalnie.
 
 %package DNS_Server_Response_Time
 Summary:	Cacti - Measure the response times of multiple internal and external DNS Resolver
@@ -110,8 +92,6 @@ Wykresy temperatury dysków - dane pobierane z hddtemp.
 
 %prep
 %setup -q -c -a6
-gzip -dNc %{SOURCE1} > ss_poller.php
-
 %undos -f php,inc
 
 %install
@@ -120,9 +100,6 @@ install -d $RPM_BUILD_ROOT{%{cactidir}/cacti,%{cactidir}/scripts,%{cactidir}/res
 
 cp -p samba/cacti_graph_template_snmp_samba.xml $RPM_BUILD_ROOT%{cactidir}/resource
 install -p samba/samba.pl $RPM_BUILD_ROOT%{cactidir}/scripts
-
-install -p ss_poller.php $RPM_BUILD_ROOT%{cactidir}/scripts/ss_poller.php
-cp -p %{SOURCE2} $RPM_BUILD_ROOT%{cactidir}/resource/cacti_host_template_local_cacti_polling_host.xml
 
 cp -p %{SOURCE4} $RPM_BUILD_ROOT%{cactidir}/resource/cacti_graph_template_dnsresponsetime.xml
 install -p %{SOURCE5} $RPM_BUILD_ROOT%{cactidir}/scripts/dnsResponseTime.pl
@@ -134,9 +111,6 @@ cp -p cacti-linux-hddtemp-1.0/cacti_graph_template_linux_hddtemp*.xml $RPM_BUILD
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%post Cacti_Poller_Statistics
-%cacti_import_template %{cactidir}/resource/cacti_host_template_local_cacti_polling_host.xml
-
 %post DNS_Server_Response_Time
 %cacti_import_template %{cactidir}/resource/cacti_graph_template_dnsresponsetime.xml
 
@@ -145,11 +119,6 @@ rm -rf $RPM_BUILD_ROOT
 
 %post hddtemp
 %cacti_import_template %{cactidir}/resource/cacti_graph_template_linux_hddtemp_disk_temperature*.xml
-
-%files Cacti_Poller_Statistics
-%defattr(644,root,root,755)
-%attr(755,root,root) %{cactidir}/scripts/ss_poller.php
-%{cactidir}/resource/cacti_host_template_local_cacti_polling_host.xml
 
 %files DNS_Server_Response_Time
 %defattr(644,root,root,755)
