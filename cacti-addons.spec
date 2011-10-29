@@ -1,13 +1,13 @@
 # TODO
-# - add more scripts,addons, but as separate packages
-# - patches for path to files (bin,includes)
-# - instead of using /usr/bin/php macro, make scripts executable with #!/usr/bin/php !
+# - separate packages for templates from here
+%define		php_min_version 5.0.0
 %include	/usr/lib/rpm/macros.perl
+%include	/usr/lib/rpm/macros.php
 Summary:	Add-ons for Cacti
 Summary(pl.UTF-8):	Dodatki do Cacti
 Name:		cacti-addons
 Version:	0.1
-Release:	0.13
+Release:	0.14
 License:	GPL v2
 Group:		Applications/WWW
 # Show locked Machines, Shares and Files from a Samba Server - http://forums.cacti.net/about7516.html
@@ -33,9 +33,10 @@ Source7:	http://www.faemalia.net/mysqlUtils/teMySQLcacti-20060810.tar.gz
 # Source7-md5:	9fa929206625d0824dff77168c85e6f8
 URL:		http://www.debianhelp.co.uk/cactitemplates.htm
 BuildRequires:	rpm-perlprov
-BuildRequires:	rpmbuild(macros) >= 1.322
+BuildRequires:	rpm-php-pearprov >= 4.4.2-11
+BuildRequires:	rpmbuild(macros) >= 1.554
 BuildRequires:	unzip
-Requires:	cacti
+Requires:	cacti >= 0.8.7e-8
 BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -51,8 +52,8 @@ Skrypty i szablony dla Cacti.
 Summary:	Statistics for Cacti Poller
 Summary(pl.UTF-8):	Statystyki działania Pollera Cacti
 Group:		Applications/WWW
-Requires:	cacti
-Requires:	cacti-add_template
+Requires:	cacti >= 0.8.7e-8
+Requires:	php-common >= 4:%{php_min_version}
 
 %description Cacti_Poller_Statistics
 Statistics for Cacti Poller, works with localhost only.
@@ -64,8 +65,7 @@ Statystyki działania Pollera Cacti; działają tylko lokalnie.
 Summary:	Cacti - Measure the response times of multiple internal and external DNS Resolver
 Summary(pl.UTF-8):	Cacti - określanie czasu odpowiedzi wielu wewnętrznych lub zewnętrznych DNS-ów
 Group:		Applications/WWW
-Requires:	cacti
-Requires:	cacti-add_template
+Requires:	cacti >= 0.8.7e-8
 
 %description DNS_Server_Response_Time
 Measure the response times of multiple internal and external DNS
@@ -85,8 +85,7 @@ ich mediany.
 Summary:	Graphs the locked machines, shares and files from a Samba server
 Summary(pl.UTF-8):	Wykresy zablokowanych stacji, udziałów i plików z serwera Samby
 Group:		Applications/WWW
-Requires:	cacti
-Requires:	cacti-add_template
+Requires:	cacti >= 0.8.7e-8
 
 %description Samba_locked_machine
 Add-on for Cacti: graphs the locked machines, shares and files from a
@@ -100,8 +99,8 @@ serwera Samby.
 Summary:	Template to query hddtemp deamon and graph disks temperature
 Summary(pl.UTF-8):	Wykresy temperatury dysków - dane pobierane z hddtemp
 Group:		Applications/WWW
-Requires:	cacti
-Requires:	cacti-add_template
+Requires:	cacti >= 0.8.7e-8
+Requires:	php-common >= 4:%{php_min_version}
 
 %description hddtemp
 Template to query hddtemp deamon and graph disks temperature.
@@ -113,40 +112,39 @@ Wykresy temperatury dysków - dane pobierane z hddtemp.
 %setup -q -c -a6
 gzip -dNc %{SOURCE1} > ss_poller.php
 
-# undos the source
-find '(' -name '*.php' -o -name '*.inc' ')' -print0 | xargs -0 sed -i -e 's,\r$,,'
+%undos -f php,inc
 
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{cactidir}/cacti,%{cactidir}/scripts,%{cactidir}/resource/script_queries,%{cactidir}/resource/snmp_queries,%{cactidir}/resource/script_server,%{_bindir}}
 
-install samba/cacti_graph_template_snmp_samba.xml $RPM_BUILD_ROOT%{cactidir}/resource
-install samba/samba.pl $RPM_BUILD_ROOT%{cactidir}/scripts
+cp -p samba/cacti_graph_template_snmp_samba.xml $RPM_BUILD_ROOT%{cactidir}/resource
+install -p samba/samba.pl $RPM_BUILD_ROOT%{cactidir}/scripts
 
-install ss_poller.php $RPM_BUILD_ROOT%{cactidir}/scripts/ss_poller.php
-install %{SOURCE2} $RPM_BUILD_ROOT%{cactidir}/resource/cacti_host_template_local_cacti_polling_host.xml
+install -p ss_poller.php $RPM_BUILD_ROOT%{cactidir}/scripts/ss_poller.php
+cp -p %{SOURCE2} $RPM_BUILD_ROOT%{cactidir}/resource/cacti_host_template_local_cacti_polling_host.xml
 
-install %{SOURCE4} $RPM_BUILD_ROOT%{cactidir}/resource/cacti_graph_template_dnsresponsetime.xml
-install %{SOURCE5} $RPM_BUILD_ROOT%{cactidir}/scripts/dnsResponseTime.pl
+cp -p %{SOURCE4} $RPM_BUILD_ROOT%{cactidir}/resource/cacti_graph_template_dnsresponsetime.xml
+install -p %{SOURCE5} $RPM_BUILD_ROOT%{cactidir}/scripts/dnsResponseTime.pl
 
-install cacti-linux-hddtemp-1.0/hddtemp.xml $RPM_BUILD_ROOT%{cactidir}/resource/script_queries
-install cacti-linux-hddtemp-1.0/hddtemp.php $RPM_BUILD_ROOT%{cactidir}/scripts
-install cacti-linux-hddtemp-1.0/cacti_graph_template_linux_hddtemp*.xml $RPM_BUILD_ROOT%{cactidir}/resource
+cp -p cacti-linux-hddtemp-1.0/hddtemp.xml $RPM_BUILD_ROOT%{cactidir}/resource/script_queries
+cp -p cacti-linux-hddtemp-1.0/hddtemp.php $RPM_BUILD_ROOT%{cactidir}/scripts
+cp -p cacti-linux-hddtemp-1.0/cacti_graph_template_linux_hddtemp*.xml $RPM_BUILD_ROOT%{cactidir}/resource
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %post Cacti_Poller_Statistics
-%{_sbindir}/cacti-add_template %{cactidir}/resource/cacti_host_template_local_cacti_polling_host.xml
+%cacti_import_template %{cactidir}/resource/cacti_host_template_local_cacti_polling_host.xml
 
 %post DNS_Server_Response_Time
-%{_sbindir}/cacti-add_template %{cactidir}/resource/cacti_graph_template_dnsresponsetime.xml
+%cacti_import_template %{cactidir}/resource/cacti_graph_template_dnsresponsetime.xml
 
 %post Samba_locked_machine
-%{_sbindir}/cacti-add_template %{cactidir}/resource/cacti_graph_template_snmp_samba.xml
+%cacti_import_template %{cactidir}/resource/cacti_graph_template_snmp_samba.xml
 
 %post hddtemp
-%{_sbindir}/cacti-add_template %{cactidir}/resource/cacti_graph_template_linux_hddtemp_disk_temperature*.xml
+%cacti_import_template %{cactidir}/resource/cacti_graph_template_linux_hddtemp_disk_temperature*.xml
 
 %files Cacti_Poller_Statistics
 %defattr(644,root,root,755)
