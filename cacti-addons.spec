@@ -1,8 +1,6 @@
 # TODO
 # - separate packages for templates from here
 %define		php_min_version 5.0.0
-%include	/usr/lib/rpm/macros.perl
-%include	/usr/lib/rpm/macros.php
 Summary:	Add-ons for Cacti
 Summary(pl.UTF-8):	Dodatki do Cacti
 Name:		cacti-addons
